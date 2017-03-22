@@ -24,7 +24,7 @@ class ExampleCompliance(AbstractCompliance):
         self.config = config
         # Remove the previous CSV file
         today = datetime.datetime.utcnow().date()
-        self.csv_filename = "tradelog_" + today.strftime("%Y-%m-%d") + ".csv"
+        self.csv_filename = "tradelog_" + today.strftime("%Y-%m-%d %H%M%S") + ".csv"
 
         try:
             fname = os.path.expanduser(os.path.join(config.OUTPUT_DIR, self.csv_filename))

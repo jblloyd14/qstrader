@@ -3,7 +3,7 @@ from __future__ import print_function
 from enum import Enum
 
 
-EventType = Enum("EventType", "TICK BAR SIGNAL ORDER FILL SENTIMENT")
+EventType = Enum("EventType", "TICK BAR SIGNAL ORDER FILL SENTIMENT ORATS")
 
 
 class Event(object):
@@ -255,3 +255,38 @@ class SentimentEvent(Event):
         self.timestamp = timestamp
         self.ticker = ticker
         self.sentiment = sentiment
+
+
+class OratsEvent(Event):
+    """
+    handles orats options surface data from quandl
+
+    """
+    def __init__(self, time, ticker, iv30, iv60, m1atmiv, m1dtex, m2atmiv, m2dtex, m3atmiv, m3dtex,
+                 slope, slope_inf, deriv, deriv_inf, dclsHV20, dORHV20):
+        self.type = EventType.ORATS
+        self.ticker = ticker
+        self.time = time
+        self.iv30 = iv30
+        self.iv60 = iv60
+        self.m1atmiv = m1atmiv
+        self.m1dtex = m1dtex
+        self.m2atmiv = m2atmiv
+        self.m2dtex = m2dtex
+        self.m3atmiv = m3atmiv
+        self.m3dtex = m3dtex
+        self.slope = slope
+        self.slope_inf = slope_inf
+        self.deriv = deriv
+        self.deriv_inf = deriv_inf
+        self.dclsHV20 = dclsHV20
+        self.dORHV20 = dORHV20
+
+    def __str__(self):
+        return "Type: %s, Ticker: %s, Time: %s, IV30: %s" % (
+            str(self.type), str(self.ticker),
+            str(self.time),  str(self.iv30)
+        )
+
+    def __repr__(self):
+        return str(self)

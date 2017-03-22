@@ -12,6 +12,7 @@ from .execution_handler.ib_simulated import IBSimulatedExecutionHandler
 from .statistics.tearsheet import TearsheetStatistics
 
 
+
 class TradingSession(object):
     """
     Enscapsulates the settings and components for
@@ -21,7 +22,7 @@ class TradingSession(object):
         self, config, strategy, tickers,
         equity, start_date, end_date, events_queue,
         session_type="backtest", end_session_time=None,
-        price_handler=None, portfolio_handler=None,
+        price_handler=None, orats_handler=None, portfolio_handler=None,
         compliance=None, position_sizer=None,
         execution_handler=None, risk_manager=None,
         statistics=None, sentiment_handler=None,
@@ -39,6 +40,7 @@ class TradingSession(object):
         self.end_date = end_date
         self.events_queue = events_queue
         self.price_handler = price_handler
+        self.orats_handler = orats_handler
         self.portfolio_handler = portfolio_handler
         self.compliance = compliance
         self.execution_handler = execution_handler
@@ -135,6 +137,10 @@ class TradingSession(object):
                             self.sentiment_handler.stream_next(
                                 stream_date=self.cur_time
                             )
+                        elif self.orats_handler is not None:
+                            self.orats_handler.stream_next(
+                                stream_date=self.cur_time
+                            )
                         self.strategy.calculate_signals(event)
                         self.portfolio_handler.update_portfolio_value()
                         self.statistics.update(event.time, self.portfolio_handler)
@@ -146,6 +152,8 @@ class TradingSession(object):
                         self.execution_handler.execute_order(event)
                     elif event.type == EventType.FILL:
                         self.portfolio_handler.on_fill(event)
+                    elif event.type == EventType.ORATS:
+                        self.strategy.calculate_signals(event)
                     else:
                         raise NotImplemented("Unsupported event.type '%s'" % event.type)
 
