@@ -166,10 +166,8 @@ class TradingSession(object):
         print("---------------------------------")
         print("Backtest complete.")
         print("Sharpe Ratio: %0.2f" % results["sharpe"])
-        print(
-            "Max Drawdown: %0.2f%%" % (
-                results["max_drawdown_pct"] * 100.0
-            )
+        print('cumlative return: %.2f' % results['cum_returns'])
+        print("Max Drawdown: %0.2f%%" % (results["max_drawdown_pct"] * 100.0)
         )
         if not testing:
             self.statistics.plot_results()

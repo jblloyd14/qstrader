@@ -14,6 +14,7 @@ import matplotlib.gridspec as gridspec
 import matplotlib.dates as mdates
 import seaborn as sns
 import os
+import csv
 
 
 class TearsheetStatistics(AbstractStatistics):
@@ -649,3 +650,13 @@ class TearsheetStatistics(AbstractStatistics):
     def save(self, filename=""):
         filename = self.get_filename(filename)
         self.plot_results
+
+    def write_results(self):
+        stats = self.get_results()
+        now = datetime.utcnow()
+        filename = "results_" + now.strftime("%Y-%m-%d_%H%M%S") + '.csv'
+        filename = os.path.expanduser(os.path.join(self.config.OUTPUT_DIR, filename))
+        with open(filename, 'wb') as f:
+            w = csv.DictWriter(f, stats.keys())
+            w.writeheader()
+            w.writerow(stats)
