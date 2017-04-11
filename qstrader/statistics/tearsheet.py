@@ -653,9 +653,21 @@ class TearsheetStatistics(AbstractStatistics):
 
     def write_results(self):
         stats = self.get_results()
+        # Equity
+        eq = pd.DataFrame(self.equity.items(), columns=['DateTime', 'Equity'])
+        eq = eq.set_index('DateTime')
+        eq = eq.sort_index()
+        eq['pct_change'] = eq['Equity'].pct_change().fillna(0.0)
+
+
         now = datetime.utcnow()
         filename = "results_" + now.strftime("%Y-%m-%d_%H%M%S") + '.csv'
+        df_filename = 'df' + filename
         filename = os.path.expanduser(os.path.join(self.config.OUTPUT_DIR, filename))
+        df_filename = os.path.expanduser(os.path.join(self.config.OUTPUT_DIR, df_filename))
+        eq.to_csv(df_filename)
+        for stk in self.portfolio_handler.portfolio.positions:
+            print('%s: %d' % (stk, self.portfolio_handler.portfolio.positions[stk].quantity))
         with open(filename, 'wb') as f:
             w = csv.DictWriter(f, stats.keys())
             w.writeheader()

@@ -3,7 +3,7 @@ from __future__ import print_function
 from enum import Enum
 
 
-EventType = Enum("EventType", "TICK BAR SIGNAL ORDER FILL SENTIMENT ORATS")
+EventType = Enum("EventType", "TICK BAR SIGNAL ORDER FILL SENTIMENT ORATS DIVIDEND")
 
 
 class Event(object):
@@ -290,3 +290,20 @@ class OratsEvent(Event):
 
     def __repr__(self):
         return str(self)
+
+
+class DividendEvent(Event):
+    """
+    Handles dividend event from yahoo_finance
+    """
+    def __init__(self, timestamp, ticker, dividend):
+        """
+        Initialises the DividendEvent.
+
+        Parameters:
+
+        """
+        self.type = EventType.DIVIDEND
+        self.timestamp = timestamp
+        self.ticker = ticker
+        self.dividend = dividend

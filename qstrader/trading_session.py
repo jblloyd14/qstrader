@@ -141,6 +141,10 @@ class TradingSession(object):
                             self.orats_handler.stream_next(
                                 stream_date=self.cur_time
                             )
+                        elif self.yahoo_dividend_handler is not None:
+                            self.yahoo_dividend_handler(
+                                stream_date=self.cur_time
+                            )
                         self.strategy.calculate_signals(event)
                         self.portfolio_handler.update_portfolio_value()
                         self.statistics.update(event.time, self.portfolio_handler)
@@ -154,6 +158,9 @@ class TradingSession(object):
                         self.portfolio_handler.on_fill(event)
                     elif event.type == EventType.ORATS:
                         self.strategy.calculate_signals(event)
+                    elif event.type == EventType.DIVIDEND:
+                        self.strategy.calculate_signals(event)
+                        # can just add directly to position.realized_pnl
                     else:
                         raise NotImplemented("Unsupported event.type '%s'" % event.type)
 
@@ -170,5 +177,6 @@ class TradingSession(object):
         print("Max Drawdown: %0.2f%%" % (results["max_drawdown_pct"] * 100.0)
         )
         if not testing:
+            self.statistics.write_results()
             self.statistics.plot_results()
         return results
